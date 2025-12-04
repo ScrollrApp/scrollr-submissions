@@ -110,6 +110,65 @@
         filter: brightness(1.1);
       }
 
+      .slide-controls {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0 4px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .slide-btn {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        background: #020617;
+        color: #e5e7eb;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .slide-btn:hover {
+        border-color: #6366f1;
+      }
+
+      .slides-note {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .slide-section {
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: #020617;
+      }
+
+      .slide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .slide-title-text {
+        font-size: 13px;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .slide-required {
+        font-size: 11px;
+        color: #f97316;
+        margin-left: 4px;
+      }
+
+      .slide-tag {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
       /* Preview side */
 
       .preview-wrapper {
@@ -133,9 +192,11 @@
         position: relative;
         min-height: 540px;
         padding-top: 10px;
-        padding-bottom: calc(45px + 40px);
+        padding-bottom: calc(45px + 40px); /* action row offset + padding */
         padding-left: 16px;
         padding-right: 16px;
+        display: flex;
+        flex-direction: column;
       }
 
       .post-content {
@@ -152,7 +213,13 @@
       .post-author {
         font-size: 12px;
         color: #9ca3af;
-        margin-bottom: 10px;
+        margin-bottom: 4px;
+      }
+
+      .slide-indicator {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-bottom: 8px;
       }
 
       .image-wrapper {
@@ -165,7 +232,7 @@
         height: 140px;
         object-fit: cover;
         border-radius: 10px;
-        display: none; /* hidden until a valid src exists */
+        visibility: hidden; /* hidden until a valid src exists */
       }
 
       .image-credit {
@@ -183,19 +250,23 @@
         display: none;
       }
 
+      .image-wrapper.hidden {
+        display: none;
+      }
+
       .post-body {
         font-size: 14px;
         line-height: 20px;
         color: #e5e7eb;
         margin-bottom: 6px;
         white-space: pre-line;
-        word-break: break-word;        /* force-wrap long words */
-        overflow-wrap: break-word;     /* modern equivalent */
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       .actions-row {
         position: absolute;
-        bottom: 45px;
+        bottom: 45px; /* matches ACTION_ROW_OFFSET */
         left: 16px;
         right: 16px;
         display: flex;
@@ -235,30 +306,80 @@
         text-align: center;
         max-width: 360px;
       }
+
+      .preview-dots {
+        position: absolute;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+      }
+
+      .preview-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #4b5563;
+        cursor: pointer;
+        transition: width 0.15s ease, background 0.15s ease;
+      }
+
+      .preview-dot.active {
+        background: #f9fafb;
+        width: 12px;
+      }
+
+      .json-preview-wrapper {
+        margin-top: 12px;
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+        padding: 8px;
+        background: #020617;
+      }
+
+      .json-preview-title {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-bottom: 4px;
+      }
+
+      .json-preview-textarea {
+        width: 100%;
+        min-height: 120px;
+        background: #020617;
+        border-radius: 8px;
+        border: 1px solid #4b5563;
+        color: #e5e7eb;
+        font-size: 11px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        padding: 6px 8px;
+        resize: vertical;
+      }
     </style>
   </head>
   <body>
     <div class="page">
       <!-- LEFT: FORM -->
       <div class="column">
-        <h1>Submit a Scrollr Slide</h1>
+        <h1>Submit a Scrollr Post</h1>
         <div class="subtitle">
           Fill in the fields; the preview on the right updates live to match the app.
+          Multi-slide posts are encouraged: use Slide 1 for a short summary and later
+          slides for more detail.
         </div>
 
-        <form
-            id="submission-form"
-            action="https://docs.google.com/forms/d/e/1FAIpQLSfD8TLkHnJv60bG9Y8p6R11T_Q38XzCCcln7_4TkfT4VJeYvA/formResponse"
-            method="POST"
-            target="_blank"
-        >
+        <form id="submission-form">
           <div class="field">
             <label for="title">Title</label>
             <input
               type="text"
               id="title"
-              name="entry.2066321863"    
-              placeholder="How to Submit a Scrollr Slide"
+              placeholder="How to Submit a Scrollr Post"
               required
             />
           </div>
@@ -268,7 +389,6 @@
             <input
               type="text"
               id="authorName"
-              name="entry.725393047" 
               placeholder="You"
               required
             />
@@ -279,8 +399,7 @@
             <input
               type="text"
               id="category"
-              name="entry.1566350746"
-              placeholder="Teaching"
+              placeholder="Teaching / Physics / Philosophy..."
               required
             />
             <div class="small-hint">
@@ -288,62 +407,48 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="imageUrl">Image URL (optional)</label>
-            <input
-              type="text"
-              id="imageUrl"
-              name="entry.282733743"
-              placeholder="https://images.pexels.com/..."
-            />
-            <div class="small-hint">
-              Use a direct image link. The preview hides the image if the URL fails to load. Direct image submission will be implemented soon.
-            </div>
+          <div class="slide-controls">
+            <button type="button" id="add-slide" class="slide-btn">
+              + Add slide
+            </button>
+            <button type="button" id="remove-slide" class="slide-btn">
+              − Remove last slide
+            </button>
+            <span class="slides-note" id="slides-count-label">
+              Currently 1 slide (Slide 1 is required; extra slides are optional).
+            </span>
           </div>
 
-          <div class="field">
-            <label for="credit">Image credit (optional)</label>
-            <input
-              type="text"
-              id="credit"
-              name="entry.2110708719"
-              placeholder="Pexels / Unsplash / author name"
-            />
-            <div class="small-hint">
-              Only shown on the slide if filled in.
-            </div>
-          </div>
+          <div id="slides-container"></div>
 
           <div class="field">
-            <label for="readMoreUrl">Read more URL</label>
+            <label for="globalReadMore">Default "Read more" URL (optional)</label>
             <input
               type="text"
-              id="readMoreUrl"
-              name="entry.1617240791"
+              id="globalReadMore"
               placeholder="https://example.com/article"
-              required
             />
             <div class="small-hint">
-              This could be the link to a paper or website (e.g. Wikipedia as a basic default). A “Read more” button always appears in the bottom-left.
+              If a slide’s own “Read more” URL is empty, this default will be used
+              instead.
             </div>
           </div>
 
-          <div class="field">
-            <label for="body">Body text</label>
-            <textarea
-              id="body"
-              name="entry.1921401744"
-              placeholder="Write a short, self-contained explanation of the concept..."
-              required
-            ></textarea>
-            <div class="small-hint">
-              Aim for ~50-150 words; long words/URLs will be wrapped automatically.
-            </div>
-          </div>
-
-          <button type="submit">Submit</button>
+          <button type="submit">Open email with JSON submission</button>
           <div class="small-hint">
-            (Currently this just blocks submission. You’ll wire it to Google Forms or an API later.)
+            Submission opens your email client (to <b>scrollrapp@gmail.com</b>) with a
+            pre-filled JSON body. Check it and hit send.
+          </div>
+
+          <div class="json-preview-wrapper">
+            <div class="json-preview-title">
+              JSON preview (this is what will be emailed)
+            </div>
+            <textarea
+              id="json-preview"
+              class="json-preview-textarea"
+              readonly
+            ></textarea>
           </div>
         </form>
       </div>
@@ -358,7 +463,10 @@
                   Your title goes here
                 </h2>
                 <div id="preview-author" class="post-author">
-                  Scrollr · Logic
+                  Author · Category
+                </div>
+                <div id="preview-slide-indicator" class="slide-indicator">
+                  Slide 1 / 1
                 </div>
 
                 <div class="image-wrapper">
@@ -373,8 +481,8 @@
                 </div>
 
                 <div id="preview-body" class="post-body">
-                  Start typing your explanation on the left. This area will show
-                  roughly how much text fits comfortably on a slide.
+                  Start typing your slides on the left. This area shows roughly how
+                  much text fits comfortably on one slide.
                 </div>
               </div>
 
@@ -392,37 +500,239 @@
                   </div>
                 </div>
               </div>
+
+              <div id="preview-dots" class="preview-dots"></div>
             </div>
           </div>
           <div class="preview-caption">
-            This uses the same font sizes, colours, and action row offset as your
-            Scrollr PostCard. Use it to sanity-check length and composition.
+            This uses the same general composition and bottom action row offset as
+            your Scrollr PostCard. Click the dots to preview different slides.
           </div>
         </div>
       </div>
     </div>
 
     <script>
+      const MAX_SLIDES = 6;
+
       const titleInput = document.getElementById("title");
       const authorNameInput = document.getElementById("authorName");
       const categoryInput = document.getElementById("category");
-      const bodyInput = document.getElementById("body");
-      const imageInput = document.getElementById("imageUrl");
-      const creditInput = document.getElementById("credit");
-      // readMoreUrl is required in the form, but preview doesn't need its value
+      const globalReadMoreInput = document.getElementById("globalReadMore");
+      const slidesContainer = document.getElementById("slides-container");
+      const slidesCountLabel = document.getElementById("slides-count-label");
+      const addSlideBtn = document.getElementById("add-slide");
+      const removeSlideBtn = document.getElementById("remove-slide");
+      const jsonPreview = document.getElementById("json-preview");
 
       const previewTitle = document.getElementById("preview-title");
       const previewAuthor = document.getElementById("preview-author");
       const previewBody = document.getElementById("preview-body");
       const previewImage = document.getElementById("preview-image");
       const previewCredit = document.getElementById("preview-credit");
+      const previewDots = document.getElementById("preview-dots");
+      const previewSlideIndicator = document.getElementById(
+        "preview-slide-indicator"
+      );
+
+      const form = document.getElementById("submission-form");
+
+      let slideCount = 0;
+      let currentSlideIndex = 0; // 0-based index
+
+      function createSlideSection(index) {
+        const section = document.createElement("div");
+        section.className = "slide-section";
+        section.dataset.slideIndex = index.toString();
+
+        const header = document.createElement("div");
+        header.className = "slide-header";
+
+        const leftHeader = document.createElement("div");
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "slide-title-text";
+        titleSpan.textContent = `Slide ${index + 1}`;
+        leftHeader.appendChild(titleSpan);
+
+        if (index === 0) {
+          const reqSpan = document.createElement("span");
+          reqSpan.className = "slide-required";
+          reqSpan.textContent = "required";
+          leftHeader.appendChild(reqSpan);
+        } else {
+          const tag = document.createElement("span");
+          tag.className = "slide-tag";
+          tag.textContent = "detail / follow-up slide (optional)";
+          leftHeader.appendChild(tag);
+        }
+
+        header.appendChild(leftHeader);
+        section.appendChild(header);
+
+        // Body
+        const bodyField = document.createElement("div");
+        bodyField.className = "field";
+
+        const bodyLabel = document.createElement("label");
+        bodyLabel.textContent = "Body text";
+        bodyLabel.htmlFor = `slide-${index}-body`;
+        bodyField.appendChild(bodyLabel);
+
+        const bodyTextarea = document.createElement("textarea");
+        bodyTextarea.id = `slide-${index}-body`;
+        bodyTextarea.placeholder =
+          index === 0
+            ? "Short, self-contained summary of the concept..."
+            : "More detailed explanation, examples, or follow-up points...";
+        if (index === 0) bodyTextarea.required = true;
+        bodyField.appendChild(bodyTextarea);
+
+        const bodyHint = document.createElement("div");
+        bodyHint.className = "small-hint";
+        bodyHint.textContent = "Aim for ~50–150 words per slide.";
+        bodyField.appendChild(bodyHint);
+
+        section.appendChild(bodyField);
+
+        // Image URL
+        const imageField = document.createElement("div");
+        imageField.className = "field";
+        const imageLabel = document.createElement("label");
+        imageLabel.textContent = "Image URL (optional)";
+        imageLabel.htmlFor = `slide-${index}-image`;
+        imageField.appendChild(imageLabel);
+
+        const imageInput = document.createElement("input");
+        imageInput.type = "text";
+        imageInput.id = `slide-${index}-image`;
+        imageInput.placeholder = "https://images.unsplash.com/...";
+        imageField.appendChild(imageInput);
+
+        const imageHint = document.createElement("div");
+        imageHint.className = "small-hint";
+        imageHint.textContent =
+          "Use a direct image link. The preview hides the image if the URL fails to load.";
+        imageField.appendChild(imageHint);
+
+        section.appendChild(imageField);
+
+        // Credit
+        const creditField = document.createElement("div");
+        creditField.className = "field";
+        const creditLabel = document.createElement("label");
+        creditLabel.textContent = "Image credit (optional)";
+        creditLabel.htmlFor = `slide-${index}-credit`;
+        creditField.appendChild(creditLabel);
+
+        const creditInput = document.createElement("input");
+        creditInput.type = "text";
+        creditInput.id = `slide-${index}-credit`;
+        creditInput.placeholder = "Unsplash / photographer / source";
+        creditField.appendChild(creditInput);
+
+        const creditHint = document.createElement("div");
+        creditHint.className = "small-hint";
+        creditHint.textContent =
+          "Shown on the bottom-right of the image if filled in.";
+        creditField.appendChild(creditHint);
+
+        section.appendChild(creditField);
+
+        // Read more URL for this slide
+        const readMoreField = document.createElement("div");
+        readMoreField.className = "field";
+        const readMoreLabel = document.createElement("label");
+        readMoreLabel.textContent = 'Read more URL (optional for this slide)';
+        readMoreLabel.htmlFor = `slide-${index}-readmore`;
+        readMoreField.appendChild(readMoreLabel);
+
+        const readMoreInput = document.createElement("input");
+        readMoreInput.type = "text";
+        readMoreInput.id = `slide-${index}-readmore`;
+        readMoreInput.placeholder = "Leave empty to use default URL above";
+        readMoreField.appendChild(readMoreInput);
+
+        section.appendChild(readMoreField);
+
+        // Attach listeners
+        [bodyTextarea, imageInput, creditInput, readMoreInput].forEach((el) => {
+          el.addEventListener("input", () => {
+            updatePreview();
+            updateJsonPreview();
+          });
+        });
+
+        return section;
+      }
+
+      function ensureAtLeastOneSlide() {
+        if (slideCount === 0) {
+          addSlide();
+        }
+      }
+
+      function addSlide() {
+        if (slideCount >= MAX_SLIDES) return;
+        const section = createSlideSection(slideCount);
+        slidesContainer.appendChild(section);
+        slideCount += 1;
+        if (slideCount === 1) {
+          currentSlideIndex = 0;
+        }
+        updateSlidesCountLabel();
+        updatePreview();
+        updateJsonPreview();
+      }
+
+      function removeSlide() {
+        if (slideCount <= 1) return; // keep at least one slide
+        const last = slidesContainer.querySelector(
+          '.slide-section[data-slide-index="' + (slideCount - 1) + '"]'
+        );
+        if (last) {
+          slidesContainer.removeChild(last);
+        }
+        slideCount -= 1;
+        if (currentSlideIndex >= slideCount) {
+          currentSlideIndex = slideCount - 1;
+        }
+        updateSlidesCountLabel();
+        updatePreview();
+        updateJsonPreview();
+      }
+
+      function updateSlidesCountLabel() {
+        slidesCountLabel.textContent = `Currently ${slideCount} slide${
+          slideCount === 1 ? "" : "s"
+        } (Slide 1 is required; extra slides are optional).`;
+      }
+
+      function getSlidesData() {
+        const slides = [];
+        for (let i = 0; i < slideCount; i++) {
+          const bodyEl = document.getElementById(`slide-${i}-body`);
+          const imageEl = document.getElementById(`slide-${i}-image`);
+          const creditEl = document.getElementById(`slide-${i}-credit`);
+          const readMoreEl = document.getElementById(`slide-${i}-readmore`);
+
+          slides.push({
+            body: bodyEl ? bodyEl.value.trim() : "",
+            imageUrl: imageEl ? imageEl.value.trim() : "",
+            creditCompany: creditEl ? creditEl.value.trim() : "",
+            readMoreUrl: readMoreEl ? readMoreEl.value.trim() : "",
+          });
+        }
+        return slides;
+      }
 
       function updatePreview() {
-        // Title
-        previewTitle.textContent =
-          titleInput.value.trim() || "Your title goes here";
+        const wrapper = document.querySelector(".image-wrapper");
 
-        // Author + Category combo line
+        // Title
+        const title = titleInput.value.trim();
+        previewTitle.textContent = title || "Your title goes here";
+
+        // Author + Category
         const authorName = authorNameInput.value.trim();
         const category = categoryInput.value.trim();
 
@@ -436,49 +746,165 @@
           previewAuthor.textContent = "Author · Category";
         }
 
-        // Body
-        const bodyText = bodyInput.value.trim();
-        previewBody.textContent =
-          bodyText ||
-          "Start typing your explanation on the left. This area will show roughly how much text fits comfortably on a slide.";
+        // Slides data
+        const slides = getSlidesData();
 
-        // Image
-        const url = imageInput.value.trim();
-        if (url) {
-          previewImage.src = url;
-          previewImage.style.display = "block";
-        } else {
-          previewImage.removeAttribute("src");
-          previewImage.style.display = "none";
+        if (slides.length === 0) {
+          // No slides at all
+          previewBody.textContent =
+            "Start typing your slides on the left. This area shows roughly how much text fits comfortably on one slide.";
+          previewImage.style.visibility = "hidden";
+          previewCredit.classList.add("hidden");
+          previewSlideIndicator.textContent = "Slide 1 / 1";
+          if (wrapper) wrapper.classList.add("hidden");
+          renderDots(1);
+          return;
         }
 
-        // Credit: only show if non-empty
-        const credit = creditInput.value.trim();
-        if (credit) {
-          previewCredit.textContent = "credit: " + credit;
-          previewCredit.classList.remove("hidden");
+        // Clamp current slide index
+        const index = Math.min(Math.max(currentSlideIndex, 0), slides.length - 1);
+        currentSlideIndex = index;
+        const slide = slides[index];
+
+        previewSlideIndicator.textContent = `Slide ${index + 1} / ${slides.length}`;
+
+        // Body text for this slide
+        previewBody.textContent =
+          slide.body ||
+          "This slide is currently empty. Add text for the body in the form on the left.";
+
+        // IMAGE + WRAPPER VISIBILITY **PER SLIDE**
+        if (slide.imageUrl) {
+          // This slide has an image → show wrapper & image
+          if (wrapper) wrapper.classList.remove("hidden");
+
+          if (previewImage.src !== slide.imageUrl) {
+            previewImage.src = slide.imageUrl;
+          }
+          previewImage.style.visibility = "visible";
+
+          if (slide.creditCompany) {
+            previewCredit.textContent = "credit: " + slide.creditCompany;
+            previewCredit.classList.remove("hidden");
+          } else {
+            previewCredit.classList.add("hidden");
+          }
         } else {
+          // This slide has NO image → remove wrapper so text moves up
+          if (wrapper) wrapper.classList.add("hidden");
+          previewImage.style.visibility = "hidden";
           previewCredit.classList.add("hidden");
+        }
+
+        // Update slide dots
+        renderDots(slides.length);
+      }
+
+      function renderDots(count) {
+        previewDots.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const dot = document.createElement("div");
+          dot.className = "preview-dot" + (i === currentSlideIndex ? " active" : "");
+          dot.dataset.dotIndex = i.toString();
+          previewDots.appendChild(dot);
         }
       }
 
       // Hide image if URL is broken
       previewImage.addEventListener("error", () => {
-        previewImage.style.display = "none";
+        previewImage.style.visibility = "hidden";
       });
 
-      [
-        titleInput,
-        authorNameInput,
-        categoryInput,
-        bodyInput,
-        imageInput,
-        creditInput,
-      ].forEach((el) => el.addEventListener("input", updatePreview));
+      previewDots.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.classList.contains("preview-dot")) {
+          const idx = parseInt(target.dataset.dotIndex, 10);
+          if (!Number.isNaN(idx)) {
+            currentSlideIndex = idx;
+            updatePreview();
+          }
+        }
+      });
 
-      // Initial state
+      function buildJson() {
+        const title = titleInput.value.trim();
+        const author = authorNameInput.value.trim();
+        const category = categoryInput.value.trim();
+        const slides = getSlidesData();
+        const defaultReadMore = globalReadMoreInput.value.trim();
+
+        // Fill missing readMoreUrl with default if present
+        const slidesWithReadMore = slides.map((s) => ({
+          body: s.body,
+          imageUrl: s.imageUrl || undefined,
+          readMoreUrl: s.readMoreUrl || defaultReadMore || undefined,
+          creditCompany: s.creditCompany || undefined,
+        }));
+
+        const post = {
+          title,
+          author,
+          category,
+          slides: slidesWithReadMore,
+        };
+
+        return post;
+      }
+
+      function updateJsonPreview() {
+        const obj = buildJson();
+        // Avoid dumping totally empty structure
+        if (!obj.title && !obj.author && !obj.category && !obj.slides[0].body) {
+          jsonPreview.value = "// JSON will appear here as you fill the form.";
+          return;
+        }
+        jsonPreview.value = JSON.stringify(obj, null, 2);
+      }
+
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        if (!form.reportValidity()) {
+          return;
+        }
+
+        const obj = buildJson();
+        const subjectBase =
+          (obj.title || "Scrollr submission") +
+          (obj.author ? " – " + obj.author : "");
+        const subject = encodeURIComponent(subjectBase);
+        const bodyLines = [
+          "Scrollr submission JSON:",
+          "",
+          JSON.stringify(obj, null, 2),
+          "",
+          "——",
+          "Sent from the Scrollr submission page.",
+        ];
+        const body = encodeURIComponent(bodyLines.join("\n"));
+
+        const mailto = `mailto:scrollrapp@gmail.com?subject=${subject}&body=${body}`;
+        window.location.href = mailto;
+      }
+
+      // Global listeners
+      [titleInput, authorNameInput, categoryInput, globalReadMoreInput].forEach(
+        (el) =>
+          el.addEventListener("input", () => {
+            updatePreview();
+            updateJsonPreview();
+          })
+      );
+
+      addSlideBtn.addEventListener("click", addSlide);
+      removeSlideBtn.addEventListener("click", removeSlide);
+      form.addEventListener("submit", handleSubmit);
+
+      // Initial setup
+      ensureAtLeastOneSlide();
       updatePreview();
-
+      updateJsonPreview();
     </script>
   </body>
 </html>
+
